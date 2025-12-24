@@ -1,7 +1,7 @@
-#include <iostream> // Entrada/salida estándar
+#include <iostream> // Entrada/salida estÃ¡ndar
 #include <fstream> // Operaciones con archivos
 #include <string> // Manejo de strings
-#include <cmath> // Funciones matemáticas (atan, sinh, etc.)
+#include <cmath> // Funciones matemÃ¡ticas (atan, sinh, etc.)
 #include <filesystem> // Operaciones con directorios (C++17)
 #include <thread> // Para pausas (sleep_for)
 #include <chrono> // Para duraciones de tiempo
@@ -15,21 +15,21 @@
 std::string servicio_mapa = "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 // NIVELES DE ZOOM PREDEFINIDOS
-int zoom_mundo = 7; // Equivale a x metros de altura
-int zoom_ciudad = 18; // Equivale a x metros de altura
+int zoom_mundo = 7; // Equivale a a 1,000 kilÃ³metros de altura
+int zoom_ciudad = 18; // Equivale a 300 metros de altura
 
-// CONFIGURACIÓN DE DIRECTORIOS Y ARCHIVOS
+// CONFIGURACIÃ“N DE DIRECTORIOS Y ARCHIVOS
 std::string carpeta_base = "Maps"; // Carpeta principal donde se almacenan todos los mapas
 std::string archivo_ciudades = "Cities.txt"; // Archivo de texto con coordenadas de ciudades
 
-// Constante PI para cálculos matemáticos
+// Constante PI para cÃ¡lculos matemÃ¡ticos
 const double PI = 3.14159265358979323846;
 
 // FUNCIONES
 // Descarga un tile individual desde el servicio de mapas usando WinHTTP (Windows API)
 bool descargar_tile_servicio(int x_tile, int y_tile, int zoom, const std::string& ruta_archivo)
 {
-    // Construir URL completa sustituyendo parámetros
+    // Construir URL completa sustituyendo parÃ¡metros
     std::string url_completa = servicio_mapa;
 
     // Reemplazar marcadores con valores reales
@@ -68,35 +68,35 @@ bool descargar_tile_servicio(int x_tile, int y_tile, int zoom, const std::string
     return (resultado == 0);
 }
 
-// Convierte coordenadas geográficas a coordenadas de tile web (x, y, zoom)
+// Convierte coordenadas geogrÃ¡ficas a coordenadas de tile web (x, y, zoom)
 std::pair<int, int> latlon_a_tile(double latitud, double longitud, int nivel_zoom)
 {
-    // Calcular número total de tiles a este nivel de zoom
+    // Calcular nÃºmero total de tiles a este nivel de zoom
     double numero_total_tiles = std::pow(2.0, nivel_zoom);
 
-    // Convertir latitud a radianes para cálculos trigonométricos
+    // Convertir latitud a radianes para cÃ¡lculos trigonomÃ©tricos
     double latitud_radianes = latitud * PI / 180.0;
 
     // Calcular coordenada X del tile (columna horizontal)
     int coordenada_x = static_cast<int>(((longitud + 180.0) / 360.0) * numero_total_tiles);
 
-    // Calcular coordenada Y del tile (fila vertical) usando proyección Mercator inversa
+    // Calcular coordenada Y del tile (fila vertical) usando proyecciÃ³n Mercator inversa
     int coordenada_y = static_cast<int>(((1.0 - (std::log(std::tan(latitud_radianes) + (1.0 / std::cos(latitud_radianes))) / PI)) / 2.0) * numero_total_tiles);
 
     return { coordenada_x, coordenada_y };
 }
 
-// Convierte coordenadas de tile web (x, y, zoom) a coordenadas geográficas de límites
+// Convierte coordenadas de tile web (x, y, zoom) a coordenadas geogrÃ¡ficas de lÃ­mites
 std::tuple<double, double, double, double> tile_a_limites_geograficos(int x_tile, int y_tile, int nivel_zoom)
 {
-    // Calcular número total de tiles en este nivel de zoom (2^zoom)
+    // Calcular nÃºmero total de tiles en este nivel de zoom (2^zoom)
     double numero_total_tiles = std::pow(2.0, nivel_zoom);
 
-    // Convertir coordenadas de tile a coordenadas geográficas de esquina noroeste
-    // Longitud oeste: fórmula lineal basada en el número de tile horizontal
+    // Convertir coordenadas de tile a coordenadas geogrÃ¡ficas de esquina noroeste
+    // Longitud oeste: fÃ³rmula lineal basada en el nÃºmero de tile horizontal
     double longitud_oeste = (x_tile / numero_total_tiles * 360.0) - 180.0;
 
-    // Latitud norte: fórmula no lineal debido a proyección Mercator
+    // Latitud norte: fÃ³rmula no lineal debido a proyecciÃ³n Mercator
     double latitud_norte_radianes = std::atan(std::sinh(PI * (1.0 - (2.0 * y_tile / numero_total_tiles))));
     double latitud_norte = latitud_norte_radianes * 180.0 / PI;
 
@@ -110,12 +110,12 @@ std::tuple<double, double, double, double> tile_a_limites_geograficos(int x_tile
     return { latitud_norte, longitud_este, latitud_sur, longitud_oeste };
 }
 
-// Función auxiliar para formatear números con precisión
+// FunciÃ³n auxiliar para formatear nÃºmeros con precisiÃ³n
 std::string formatear_coordenada(double valor, int precision)
 {
     std::string texto = std::to_string(valor);
 
-    // Encontrar la posición del punto decimal
+    // Encontrar la posiciÃ³n del punto decimal
     size_t pos_punto = texto.find('.');
 
     if (pos_punto != std::string::npos)
@@ -123,14 +123,14 @@ std::string formatear_coordenada(double valor, int precision)
         // Recortar ceros finales
         texto.erase(texto.find_last_not_of('0') + 1, std::string::npos);
 
-        // Si el punto decimal queda al final, eliminarlo también
+        // Si el punto decimal queda al final, eliminarlo tambiÃ©n
         if (texto.back() == '.')
         {
             texto.pop_back();
         }
     }
 
-    // Asegurar que haya al menos un dígito después del punto decimal
+    // Asegurar que haya al menos un dÃ­gito despuÃ©s del punto decimal
     if (texto.find('.') == std::string::npos)
     {
         texto += ".0";
@@ -160,7 +160,7 @@ std::string generar_nombre_tile(double lat_norte, double lon_este, double lat_su
     return nombre_final;
 }
 
-// Función auxiliar para convertir string a minúsculas
+// FunciÃ³n auxiliar para convertir string a minÃºsculas
 std::string a_minusculas(const std::string& texto)
 {
     std::string resultado = texto;
@@ -170,7 +170,7 @@ std::string a_minusculas(const std::string& texto)
     return resultado;
 }
 
-// Función auxiliar para reemplazar espacios por guiones bajos
+// FunciÃ³n auxiliar para reemplazar espacios por guiones bajos
 std::string reemplazar_espacios(const std::string& texto)
 {
     std::string resultado = texto;
@@ -186,10 +186,10 @@ std::string reemplazar_espacios(const std::string& texto)
     return resultado;
 }
 
-// Busca información de una ciudad en el archivo de texto de ciudades
+// Busca informaciÃ³n de una ciudad en el archivo de texto de ciudades
 std::tuple<double, double, double, double> buscar_informacion_ciudad(const std::string& nombre_ciudad, const std::string& ruta_archivo)
 {
-    // Normalizar nombre de ciudad para comparación insensible a mayúsculas/minúsculas
+    // Normalizar nombre de ciudad para comparaciÃ³n insensible a mayÃºsculas/minÃºsculas
     std::string nombre_normalizado = a_minusculas(nombre_ciudad);
     nombre_normalizado = reemplazar_espacios(nombre_normalizado);
 
@@ -204,12 +204,12 @@ std::tuple<double, double, double, double> buscar_informacion_ciudad(const std::
 
     while (std::getline(archivo, linea_actual))
     {
-        // Eliminar espacios en blanco al inicio y final de la línea
+        // Eliminar espacios en blanco al inicio y final de la lÃ­nea
         size_t inicio = linea_actual.find_first_not_of(" \t");
 
         if (inicio == std::string::npos)
         {
-            continue; // Línea vacía
+            continue; // LÃ­nea vacÃ­a
         }
 
         size_t fin = linea_actual.find_last_not_of(" \t");
@@ -231,10 +231,10 @@ std::tuple<double, double, double, double> buscar_informacion_ciudad(const std::
             inicio_campo = pos_coma + 1;
         }
 
-        // Agregar el último campo
+        // Agregar el Ãºltimo campo
         campos_linea.push_back(linea_limpia.substr(inicio_campo));
 
-        // Verificar que la línea tenga exactamente 5 campos
+        // Verificar que la lÃ­nea tenga exactamente 5 campos
         if (campos_linea.size() == 5)
         {
             // Normalizar nombre de ciudad del archivo
@@ -256,7 +256,7 @@ std::tuple<double, double, double, double> buscar_informacion_ciudad(const std::
                 }
                 catch (...)
                 {
-                    // Error en conversión numérica: continuar con siguiente línea
+                    // Error en conversiÃ³n numÃ©rica: continuar con siguiente lÃ­nea
                     continue;
                 }
             }
@@ -286,7 +286,7 @@ bool descargar_mapa_mundial()
     // Mostrar mensaje indicando inicio de descarga
     std::cout << "Downloading..." << std::endl;
 
-    // Calcular número total de tiles en cada dimensión para este zoom
+    // Calcular nÃºmero total de tiles en cada dimensiÃ³n para este zoom
     int numero_tiles_dimension = std::pow(2, zoom_mundo);
 
     // Bucle para recorrer todas las coordenadas X (columnas) de tiles
@@ -295,11 +295,11 @@ bool descargar_mapa_mundial()
         // Bucle para recorrer todas las coordenadas Y (filas) de tiles
         for (int coordenada_y = 0; coordenada_y < numero_tiles_dimension; ++coordenada_y)
         {
-            // Calcular límites geográficos de este tile específico
+            // Calcular lÃ­mites geogrÃ¡ficos de este tile especÃ­fico
             auto [latitud_norte, longitud_este, latitud_sur, longitud_oeste] =
                 tile_a_limites_geograficos(coordenada_x, coordenada_y, zoom_mundo);
 
-            // Generar nombre de archivo basado en los límites calculados
+            // Generar nombre de archivo basado en los lÃ­mites calculados
             std::string nombre_archivo_tile = generar_nombre_tile(latitud_norte, longitud_este, latitud_sur, longitud_oeste);
             std::filesystem::path ruta_completa_archivo = carpeta_mundo / nombre_archivo_tile;
 
@@ -320,19 +320,19 @@ bool descargar_mapa_mundial()
         }
     }
 
-    // Salto de línea
+    // Salto de lÃ­nea
     std::cout << std::endl;
 
     return true;
 }
 
-// Descarga todos los tiles dentro del área de una ciudad sin duplicados
+// Descarga todos los tiles dentro del Ã¡rea de una ciudad sin duplicados
 bool descargar_ciudad_completa(const std::string& nombre_ciudad, double norte, double este, double sur, double oeste)
 {
     // Crear nombre de carpeta basado en el nombre de la ciudad
     std::string nombre_carpeta_ciudad = nombre_ciudad;
 
-    // Convertir primera letra a mayúscula y resto a minúscula (simplificado)
+    // Convertir primera letra a mayÃºscula y resto a minÃºscula (simplificado)
     if (!nombre_carpeta_ciudad.empty())
     {
         nombre_carpeta_ciudad[0] = std::toupper(nombre_carpeta_ciudad[0]);
@@ -351,11 +351,11 @@ bool descargar_ciudad_completa(const std::string& nombre_ciudad, double norte, d
     // Mostrar mensaje indicando inicio de descarga para esta ciudad
     std::cout << "Downloading..." << std::endl;
 
-    // Convertir coordenadas límite a tiles en el nivel de zoom de ciudad
-    // Esquina noroeste (norte, oeste) para obtener tile mínimo
+    // Convertir coordenadas lÃ­mite a tiles en el nivel de zoom de ciudad
+    // Esquina noroeste (norte, oeste) para obtener tile mÃ­nimo
     auto [x_min, y_min] = latlon_a_tile(norte, oeste, zoom_ciudad);
 
-    // Esquina sureste (sur, este) para obtener tile máximo
+    // Esquina sureste (sur, este) para obtener tile mÃ¡ximo
     auto [x_max, y_max] = latlon_a_tile(sur, este, zoom_ciudad);
 
     // Asegurar que x_min < x_max y y_min < y_max
@@ -374,11 +374,11 @@ bool descargar_ciudad_completa(const std::string& nombre_ciudad, double norte, d
     {
         for (int y_tile = y_min; y_tile <= y_max; ++y_tile)
         {
-            // Calcular límites geográficos de este tile específico
+            // Calcular lÃ­mites geogrÃ¡ficos de este tile especÃ­fico
             auto [latitud_norte, longitud_este, latitud_sur, longitud_oeste] =
                 tile_a_limites_geograficos(x_tile, y_tile, zoom_ciudad);
 
-            // Generar nombre de archivo basado en los límites calculados
+            // Generar nombre de archivo basado en los lÃ­mites calculados
             std::string nombre_archivo_tile = generar_nombre_tile(latitud_norte, longitud_este, latitud_sur, longitud_oeste);
             std::filesystem::path ruta_completa_archivo = carpeta_ciudad / nombre_archivo_tile;
 
@@ -399,7 +399,7 @@ bool descargar_ciudad_completa(const std::string& nombre_ciudad, double norte, d
         }
     }
 
-    // Salto de línea
+    // Salto de lÃ­nea
     std::cout << std::endl;
 
     return true;
@@ -411,7 +411,7 @@ int main()
     // Crear carpeta base para mapas si no existe
     std::filesystem::create_directories(carpeta_base);
 
-    // Mostrar instrucción inicial para usuario
+    // Mostrar instrucciÃ³n inicial para usuario
     std::cout << "Enter 'world' to download world map" << std::endl;
     std::cout << std::endl;
 
@@ -445,7 +445,7 @@ int main()
             {
                 std::cout << std::endl;
 
-                continue; // Entrada vacía
+                continue; // Entrada vacÃ­a
             }
 
             size_t fin = entrada_usuario.find_last_not_of(" \t");
@@ -467,11 +467,11 @@ int main()
                 }
             }
 
-            // CASO 2: Usuario solicita ciudad específica
+            // CASO 2: Usuario solicita ciudad especÃ­fica
             auto [coordenada_norte, coordenada_este, coordenada_sur, coordenada_oeste] =
                 buscar_informacion_ciudad(entrada_usuario, archivo_ciudades);
 
-            // Verificar si se encontró la ciudad (valores no cero)
+            // Verificar si se encontrÃ³ la ciudad (valores no cero)
             if (coordenada_norte == 0.0 && coordenada_este == 0.0 &&
                 coordenada_sur == 0.0 && coordenada_oeste == 0.0)
             {
