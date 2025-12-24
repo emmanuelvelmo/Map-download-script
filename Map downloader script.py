@@ -7,8 +7,8 @@ import time # Pausas para evitar sobrecargar servidores
 servicio_mapa = "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 
 # NIVELES DE ZOOM PREDEFINIDOS
-zoom_mundo = 7 # Equivale a x metros de altura
-zoom_ciudad = 18 # Equivale a x metros de altura
+zoom_mundo = 7 # Equivale a 1,000 kilómetros de altura
+zoom_ciudad = 18 # Equivale a 300 metros de altura
 
 # CONFIGURACIÓN DE DIRECTORIOS Y ARCHIVOS
 carpeta_base = "Maps" # Carpeta principal donde se almacenan todos los mapas
