@@ -6,7 +6,7 @@ import time # Pausas para evitar sobrecargar servidores
 # URL DEL SERVICIO DE MAPAS SATELITALES
 servicio_mapa = "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 
-# NIVELES DE ZOOM PREDEFINIDOS
+# NIVELES DE ZOOM PREDEFINIDOS (256×256 px)
 zoom_mundo = 7 # Equivale a 1,000 kilómetros de altura
 zoom_ciudad = 18 # Equivale a 300 metros de altura
 
